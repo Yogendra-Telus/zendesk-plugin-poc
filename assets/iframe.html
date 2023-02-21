@@ -21,22 +21,11 @@
     <link rel="stylesheet" href="main.css" />
   </head>
   <body>
-    <div class="container">
-      <div>Detected Text</div>
-      <div id="detected-text"></div>
-    </div>
-    <div class="container">
-      <div>Detected Language</div>
-      <div id="detected-language"></div>
-    </div>
-    <div class="container">
-      <div>Translated Text</div>
-      <div id="translated-text"></div>
-    </div>
+    <div class="chat-container" id="chat-container"></div>
 
     <div class="btn-container">
-      <div class="apply-btn" id="apply-btn">Apply</div>
-      <div class="copy-btn" id="copy-btn">Copy</div>
+      <textarea type="text" id="send-txt" class="input-field"></textarea>
+      <div class="copy-btn" id="send-btn">Send Message</div>
     </div>
 
     <script src="main.js"></script>
