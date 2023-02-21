@@ -1,39 +1,83 @@
-(function () {
-  var client = ZAFClient.init();
-  client.invoke("resize", { width: "100%", height: "180px" });
-  client.get(["ticket.conversation"]).then(function (data) {
-    console.log("tikcet", data); // { 'ticket.subject': 'Help, my printer is on fire', 'ticket.requester.name': 'Mikkel Svane' }
-    var len = data["ticket.conversation"].length;
-    var data_last = data["ticket.conversation"][len - 1];
-    if (len && data_last) {
-      console.log("last conversation", data_last);
-      var error_data = {
-        code: "codestring",
-        info: data_last.message.content,
+const languageKey = "LANGUAGES";
+
+var client = ZAFClient.init();
+client.invoke("resize", { width: "100%", height: "280px" });
+
+const fetchLanguageList = () => {
+  const options = {
+    url: "https://tl-qa.xavlab.xyz/extension/api/languages/allowed",
+    type: "GET",
+  };
+
+  client.request(options).then((response) => {
+    localStorage.setItem(languageKey, JSON.stringify(response.result));
+  });
+};
+
+fetchLanguageList();
+
+const detectedLanguage = document.getElementById("detected-language");
+const detectedText = document.getElementById("detected-text");
+const translatedText = document.getElementById("translated-text");
+const copyBtn = document.getElementById("copy-btn");
+
+client.get(["ticket.conversation"]).then(function (data) {
+  var conversionLength = data["ticket.conversation"].length;
+
+  if (conversionLength) {
+    const conversionDetail = data["ticket.conversation"][conversionLength - 1];
+    const textToTranslate = conversionDetail.message.content;
+
+    detectedText.innerText = textToTranslate;
+
+    if (textToTranslate) detectLanguageAndTranslate(textToTranslate, client);
+  }
+});
+
+function detectLanguageAndTranslate(text, client) {
+  const url = "https://tl-qa.xavlab.xyz/extension/api/detect";
+  const payload = {
+    Text: text,
+  };
+
+  const optionsForDetect = {
+    url,
+    type: "POST",
+    contentType: "application/json",
+    data: JSON.stringify(payload),
+  };
+
+  client.request(optionsForDetect).then(async (response) => {
+    const { result } = response;
+    const languages = await JSON.parse(localStorage.getItem(languageKey));
+
+    if (!!result && Array.isArray(result)) {
+      const languageCode = result[0].language;
+
+      const languageDetail = languages.find((lan) => lan.code === languageCode);
+
+      detectedLanguage.innerText = languageDetail?.name || "";
+
+      const optionsForTranslate = {
+        url: `https://tl-qa.xavlab.xyz/extension/api/translator?to=en&from=${languageCode}`,
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(payload),
       };
-      showError(error_data);
+
+      client.request(optionsForTranslate).then((response) => {
+        const { result } = response;
+
+        if (!!result && Array.isArray(result)) {
+          const translatedTextFromAPI = result[0].translations[0].text;
+
+          translatedText.innerText = translatedTextFromAPI || "";
+        }
+      });
     }
   });
-  showSearchForm();
-
-  document
-    .getElementById("get-btn")
-    .addEventListener("click", function (event) {
-      event.preventDefault();
-      var search_str = document.getElementById("subject-field").value;
-      getArticles(search_str, client);
-    });
-})();
-
-function showSearchForm() {
-  var source = document.getElementById("search-template").innerHTML;
-  var template = Handlebars.compile(source);
-  document.getElementById("content").innerHTML = template();
 }
 
-function showError(error_data) {
-  var source = document.getElementById("error-template").innerHTML;
-  var template = Handlebars.compile(source);
-  var html = template(error_data);
-  document.getElementById("content").innerHTML = html;
-}
+copyBtn.addEventListener("click", () => {
+  navigator.clipboard.writeText(translatedText.innerText);
+});

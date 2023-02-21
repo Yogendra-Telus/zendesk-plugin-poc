@@ -21,35 +21,24 @@
     <link rel="stylesheet" href="main.css" />
   </head>
   <body>
-    <h2>LEARN MORE</h2>
-    <div id="content"></div>
-    <script id="search-template" type="text/x-handlebars-template">
-      <form id="search-form">
-        <p>
-          <label for="name">Subject</label><br />
-          <input type="text" name="subject-field" id="subject-field" />
-        </p>
-        <p>
-          <button id="get-btn" class="c-btn">Get article links</button>
-        </p>
-      </form>
-    </script>
-    <script id="error-template" type="text/x-handlebars-template">
-      <div>
-        <p style="color: red;"><strong>Something went wrong.</strong></p>
-        <p><strong>Error code</strong>: {{code}}</p>
-        <p><strong>Info</strong>: {{info}}</p>
-        <p>Please report a bug at the link below or
-          <a id="reset-link" href="">reset</a>
-          the form.</p>
-      </div>
-    </script>
-    
+    <div class="container">
+      <div>Detected Text</div>
+      <div id="detected-text"></div>
+    </div>
+    <div class="container">
+      <div>Detected Language</div>
+      <div id="detected-language"></div>
+    </div>
+    <div class="container">
+      <div>Translated Text</div>
+      <div id="translated-text"></div>
+    </div>
 
-    <script src="error.js"></script>
+    <div class="btn-container">
+      <div class="apply-btn" id="apply-btn">Apply</div>
+      <div class="copy-btn" id="copy-btn">Copy</div>
+    </div>
+
     <script src="main.js"></script>
-    <footer>
-      <a href="https://mysite.github.io/support" target="_blank">Report bugs</a>
-    </footer>
   </body>
 </html>
