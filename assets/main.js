@@ -8,13 +8,14 @@
     if (len && data_last) {
       console.log("last conversation", data_last);
       var error_data = {
-        code: "codestring",
-        info: data_last.message.content,
+        code: "Source text 'Chinese'",// this should come from detect api
+        source_text: data_last.message.content,
+        translated_text:'Hello How are you?'// translated text
       };
       showError(error_data);
     }
   });
-  showSearchForm();
+  //showSearchForm();
 
   document
     .getElementById("get-btn")
