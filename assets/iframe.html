@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="main.css" />
   </head>
   <body>
-    <h2>LEARN MORE</h2>
+    <h2>Telus Translator App</h2>
     <div id="content"></div>
     <script id="search-template" type="text/x-handlebars-template">
       <form id="search-form">
@@ -36,12 +36,13 @@
     </script>
     <script id="error-template" type="text/x-handlebars-template">
       <div>
-        <p style="color: red;"><strong>Something went wrong.</strong></p>
-        <p><strong>Error code</strong>: {{code}}</p>
-        <p><strong>Info</strong>: {{info}}</p>
-        <p>Please report a bug at the link below or
+        <p style="color: red;"><strong>Non English Text Detected</strong></p>
+        <p><strong>Source Language</strong>: {{code}}</p>
+        <p><strong>Source text</strong>: {{source_text}}</p>
+        <p><strong>Translated text</strong>: {{translated_text}}</p>
+        <!-- <p>Please report a bug at the link below or
           <a id="reset-link" href="">reset</a>
-          the form.</p>
+          the form.</p> -->
       </div>
     </script>
     
