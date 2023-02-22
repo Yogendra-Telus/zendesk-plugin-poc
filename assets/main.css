@@ -2,6 +2,11 @@ html {
   overflow-y: hidden;
 }
 
+html,
+body {
+  height: 100%;
+}
+
 .container {
   display: flex;
   align-items: center;
@@ -36,7 +41,7 @@ html {
   background: #4b286d;
   color: white;
   border-radius: 3px;
-  width: 100px;
+  width: 80px;
   display: flex;
   justify-content: center;
   padding: 5px;
@@ -60,7 +65,7 @@ html {
 }
 
 .chat-container {
-  max-height: 550px;
+  max-height: 280px;
   overflow-y: auto;
 }
 
@@ -71,4 +76,17 @@ html {
 
 .input-field:focus-visible {
   outline: none;
+}
+
+.username {
+  color: rgb(3, 54, 61);
+  font-weight: 700;
+}
+
+.translation-heading {
+  font-weight: 500;
+}
+
+.date-time {
+  opacity: 0.8;
 }

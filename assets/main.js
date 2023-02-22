@@ -2,7 +2,7 @@ const languageKey = "LANGUAGES";
 
 var client = ZAFClient.init();
 
-client.invoke("resize", { width: "100%", height: "600px" });
+client.invoke("resize", { width: "100%", height: "340px" });
 
 const fetchLanguageList = () => {
   const options = {
@@ -22,15 +22,17 @@ const sendBtn = document.getElementById("send-btn");
 const sendText = document.getElementById("send-txt");
 let updateLangCode = "en";
 
-client.get(["ticket.conversation"]).then(function (data) {
-  var conversionLength = data["ticket.conversation"].length;
+setInterval(() => {
+  client.get(["ticket.conversation"]).then(function (data) {
+    var conversionLength = data["ticket.conversation"].length;
 
-  if (conversionLength) {
-    const conversations = data["ticket.conversation"];
+    if (conversionLength) {
+      const conversations = data["ticket.conversation"];
 
-    detectLanguageAndTranslate(conversations, client);
-  }
-});
+      detectLanguageAndTranslate(conversations, client);
+    }
+  });
+}, 1000);
 
 function detectLanguageAndTranslate(conversations, client) {
   const conversationElements = [];
@@ -88,11 +90,13 @@ function detectLanguageAndTranslate(conversations, client) {
 
             const authorName = document.createElement("div");
             authorName.innerText = element.author.name;
+            authorName.classList.add("username");
 
             const timeOfMsg = document.createElement("div");
             const time = new Date(element.timestamp).toLocaleTimeString();
             const date = new Date(element.timestamp).toLocaleDateString();
             timeOfMsg.innerText = date + "  " + time;
+            timeOfMsg.classList.add("date-time");
 
             headingContainer.appendChild(authorName);
             headingContainer.appendChild(timeOfMsg);
@@ -105,7 +109,17 @@ function detectLanguageAndTranslate(conversations, client) {
             originalMsg.style.marginBottom = "5px";
 
             const translatedMsg = document.createElement("div");
-            translatedMsg.innerText = `Translated Text:  ${translatedTextFromAPI}`;
+            translatedMsg.style.display = "flex";
+
+            const translatedHeading = document.createElement("div");
+            translatedHeading.style.marginRight = "10px";
+            translatedHeading.innerText = "Translated Text:";
+            translatedHeading.classList.add("translation-heading");
+            const translatedText = document.createElement("div");
+            translatedText.innerText = `${translatedTextFromAPI}`;
+
+            translatedMsg.appendChild(translatedHeading);
+            translatedMsg.appendChild(translatedText);
 
             messageContainer.appendChild(originalMsg);
             messageContainer.appendChild(translatedMsg);
@@ -122,6 +136,10 @@ function detectLanguageAndTranslate(conversations, client) {
 
   const intervalId = setInterval(() => {
     if (conversations.length === conversationElements.length) {
+      while (chatRoom.firstChild) {
+        chatRoom.removeChild(parentElement.firstChild);
+      }
+
       conversationElements.sort((a, b) => a.id - b.id);
 
       conversationElements.forEach((e) => {
@@ -154,4 +172,8 @@ sendBtn.addEventListener("click", () => {
         });
     }
   });
+});
+
+client.on("message", (data) => {
+  console.log("data", data);
 });
