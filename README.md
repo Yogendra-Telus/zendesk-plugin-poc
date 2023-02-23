@@ -2,7 +2,7 @@
 
 ### **Description**
 
-This plugin helps agent to translate the conversions into its native language.
+This plugin helps agent to translate the conversations into its native language.
 
 <br />
 
@@ -28,7 +28,7 @@ This plugin helps agent to translate the conversions into its native language.
 
 ### **Instruction for running local server**
 
-- Run **yarn build:[Env_name]** or **npm run build:[Env_name]** in one terminal.
+- In One terminal, run **yarn build:[Env_name]** or **npm run build:[Env_name]**.
 - In Second terminal, run **yarn serve:[Env_name]** or **npm run serve:[Env_name]**.
 
 <br />
