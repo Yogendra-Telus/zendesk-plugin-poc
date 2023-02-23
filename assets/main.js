@@ -22,23 +22,34 @@ const sendBtn = document.getElementById("send-btn");
 const sendText = document.getElementById("send-txt");
 let updateLangCode = "en";
 
-setInterval(() => {
-  client.get(["ticket.conversation"]).then(function (data) {
-    var conversionLength = data["ticket.conversation"].length;
+client.get(["ticket.conversation"]).then(function (data) {
+  var conversionLength = data["ticket.conversation"].length;
 
-    if (conversionLength) {
-      const conversations = data["ticket.conversation"];
+  if (conversionLength) {
+    const conversations = data["ticket.conversation"];
 
-      detectLanguageAndTranslate(conversations, client);
-    }
-  });
-}, 1000);
+    detectLanguageAndTranslate(conversations, client);
+  }
+});
+
+client.on("ticket.conversation.changed", function (conversations) {
+  const conversionLength = conversations.length;
+
+  if (conversionLength) {
+    detectLanguageAndTranslate(conversations, client);
+  }
+});
 
 function detectLanguageAndTranslate(conversations, client) {
   const conversationElements = [];
 
   conversations.forEach((element, elementId) => {
-    const text = element.message.content;
+    const textInHTML = element.message.content;
+    const convertInElement = document.createElement("div");
+    convertInElement.innerHTML = textInHTML;
+
+    const text = convertInElement.textContent;
+
     const payload = {
       Text: text,
     };
@@ -134,11 +145,9 @@ function detectLanguageAndTranslate(conversations, client) {
     });
   });
 
-  const intervalId = setInterval(() => {
+  const timeoutId = setTimeout(() => {
     if (conversations.length === conversationElements.length) {
-      while (chatRoom.firstChild) {
-        chatRoom.removeChild(parentElement.firstChild);
-      }
+      chatRoom.innerHTML = "";
 
       conversationElements.sort((a, b) => a.id - b.id);
 
@@ -146,7 +155,11 @@ function detectLanguageAndTranslate(conversations, client) {
         chatRoom.appendChild(e.node);
       });
 
-      clearInterval(intervalId);
+      setTimeout(() => {
+        chatRoom.scrollTop = chatRoom.scrollHeight;
+      }, 500);
+
+      clearTimeout(timeoutId);
     }
   }, 1000);
 }
@@ -166,14 +179,13 @@ sendBtn.addEventListener("click", () => {
     const { result } = response;
     if (!!result && Array.isArray(result)) {
       client
-        .invoke("ticket.comment.appendText", result[0].translations[0].text)
+        .invoke("ticket.sendMessage", {
+          channel: "messaging",
+          message: result[0].translations[0].text,
+        })
         .then(() => {
           sendText.value = "";
         });
     }
   });
-});
-
-client.on("message", (data) => {
-  console.log("data", data);
 });
